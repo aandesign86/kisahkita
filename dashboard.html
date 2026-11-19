@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Pelanggan — KisahKita</title>
+  <link rel="stylesheet" href="assets/app.css" />
+  <style>
+    .dash-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 28px 0 20px;
+    }
+    .order-item {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">Kisah<span>Kita</span> <small style="font-size:0.75rem; color:var(--muted); font-weight:600;">Pelanggan</small></a>
+      <div class="nav-links">
+        <a href="index.html" class="btn btn-outline btn-sm">Katalog</a>
+        <span id="userNameBadge" style="font-size:0.88rem; font-weight:600;"></span>
+        <button onclick="logout()" class="btn btn-danger btn-sm">Keluar</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="dash-header">
+      <div>
+        <h1 style="font-size:1.55rem; color:var(--primary);">Undangan Saya</h1>
+        <p style="color:var(--muted); font-size:0.92rem;">Kelola konten undangan, bagikan link tamu, dan pantau ucapan RSVP.</p>
+      </div>
+      <button onclick="openNewOrderModal()" class="btn btn-primary">+ Buat Undangan Baru</button>
+    </div>
+
+    <div id="globalAlert" class="alert"></div>
+    <div id="ordersContainer">
+      <div class="card">Memuat data pesanan undangan Anda...</div>
+    </div>
+  </main>
+
+  <!-- Modal Buat Pesanan Baru -->
+  <div class="modal-backdrop" id="newOrderModal">
+    <div class="modal-box">
+      <h3 style="color:var(--primary); margin-bottom:14px;">Buat Pesanan Undangan Baru</h3>
+      <form id="newOrderForm">
+        <div class="form-group">
+          <label>Pilih Template</label>
+          <select id="orderTemplateSelect" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+          <label>Slug Link Undangan (tanpa spasi, huruf kecil)</label>
+          <input type="text" id="orderSlugInput" class="form-control" placeholder="contoh: raka-nadia" required />
+          <small style="color:var(--muted);">Akan menjadi alamat undangan: view.html?slug=<strong>raka-nadia</strong></small>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
+          <button type="button" onclick="closeModal('newOrderModal')" class="btn btn-outline">Batal</button>
+          <button type="submit" class="btn btn-primary">Buat Pesanan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Editor Konten Undangan -->
+  <div class="modal-backdrop" id="editorModal">
+    <div class="modal-box" style="max-width:680px;">
+      <h3 style="color:var(--primary); margin-bottom:14px;">Edit Data Undangan (<span id="editSlugLabel"></span>)</h3>
+      <form id="editorForm">
+        <input type="hidden" id="editSlug" />
+        <div class="two-col">
+          <div class="form-group">
+            <label>Nama Panggilan Pria</label>
+            <input type="text" id="pria_panggilan" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label>Nama Panggilan Wanita</label>
+            <input type="text" id="wanita_panggilan" class="form-control" required />
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="form-group">
+            <label>Nama Lengkap &amp; Gelar Pria</label>
+            <input type="text" id="pria_lengkap" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Nama Lengkap &amp; Gelar Wanita</label>
+            <input type="text" id="wanita_lengkap" class="form-control" />
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="form-group">
+            <label>Nama Orang Tua Pria</label>
+            <input type="text" id="pria_ortu" class="form-control" placeholder="Putra Bpk. ... & Ibu ..." />
+          </div>
+          <div class="form-group">
+            <label>Nama Orang Tua Wanita</label>
+            <input type="text" id="wanita_ortu" class="form-control" placeholder="Putri Bpk. ... & Ibu ..." />
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="form-group">
+            <label>Tanggal Acara</label>
+            <input type="date" id="tanggal_acara" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Waktu Akad</label>
+            <input type="text" id="waktu_akad" class="form-control" placeholder="08.00 - 10.00 WIB" />
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="form-group">
+            <label>Waktu Resepsi</label>
+            <input type="text" id="waktu_resepsi" class="form-control" placeholder="11.00 - 14.00 WIB" />
+          </div>
+          <div class="form-group">
+            <label>Nama Gedung / Lokasi</label>
+            <input type="text" id="tempat_nama" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Alamat Lengkap Lokasi</label>
+          <input type="text" id="tempat_alamat" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Link Google Maps</label>
+          <input type="url" id="maps_url" class="form-control" placeholder="https://maps.google.com/..." />
+        </div>
+        <div class="form-group">
+          <label>Cerita Singkat Cinta</label>
+          <textarea id="cerita" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="two-col">
+          <div class="form-group">
+            <label>Bank / E-Wallet Amplop Digital</label>
+            <input type="text" id="bank_nama" class="form-control" placeholder="BCA / Mandiri / DANA" />
+          </div>
+          <div class="form-group">
+            <label>Nomor Rekening</label>
+            <input type="text" id="bank_norek" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Atas Nama Rekening</label>
+          <input type="text" id="bank_an" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>URL Foto Cover (Google Drive / Cloudinary / Unsplash)</label>
+          <input type="url" id="foto_cover" class="form-control" />
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
+          <button type="button" onclick="closeModal('editorModal')" class="btn btn-outline">Tutup</button>
+          <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Generator Tamu & RSVP -->
+  <div class="modal-backdrop" id="guestModal">
+    <div class="modal-box">
+      <h3 style="color:var(--primary); margin-bottom:10px;">Bagikan Undangan &amp; Lihat Ucapan</h3>
+      <div class="form-group">
+        <label>Ketik Nama Tamu Undangan</label>
+        <input type="text" id="guestNameInput" class="form-control" placeholder="Contoh: Bapak Budi Santoso & Keluarga" oninput="updateGuestLink()" />
+      </div>
+      <div class="form-group">
+        <label>Link Khusus Tamu</label>
+        <input type="text" id="generatedGuestUrl" class="form-control" readonly />
+      </div>
+      <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <button type="button" onclick="copyGuestUrl()" class="btn btn-outline btn-sm">Salin Link</button>
+        <a id="waShareBtn" href="#" target="_blank" class="btn btn-primary btn-sm">Kirim via WhatsApp</a>
+      </div>
+
+      <h4 style="margin-bottom:8px; color:var(--primary);">Ucapan &amp; Konfirmasi Kehadiran Tamu</h4>
+      <div id="ucapanList" style="max-height:220px; overflow-y:auto; border:1px solid var(--border); border-radius:8px; padding:10px;"></div>
+
+      <div style="text-align:right; margin-top:14px;">
+        <button type="button" onclick="closeModal('guestModal')" class="btn btn-outline">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="assets/api.js"></script>
+  <script>
+    const session = KisahAPI.requireAuth('user');
+    if (session) {
+      document.getElementById('userNameBadge').textContent = session.nama;
+    }
+
+    let myOrders = [];
+    let catalogTemplates = [];
+    let activeGuestSlug = '';
+
+    function logout() {
+      KisahAPI.clearSession();
+      window.location.href = 'login.html';
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function showAlert(msg, isError = false) {
+      const box = document.getElementById('globalAlert');
+      box.className = 'alert show ' + (isError ? 'alert-error' : 'alert-success');
+      box.textContent = msg;
+    }
+
+    function openNewOrderModal(preselectTpl = '') {
+      const sel = document.getElementById('orderTemplateSelect');
+      sel.innerHTML = catalogTemplates.map(t =>
+        `<option value="${t.template_id}" ${t.template_id === preselectTpl ? 'selected' : ''}>${t.nama_template} — ${KisahAPI.formatRupiah(t.harga)}</option>`
+      ).join('');
+      openModal('newOrderModal');
+    }
+
+    function renderOrders() {
+      const container = document.getElementById('ordersContainer');
+      if (!myOrders.length) {
+        container.innerHTML = `
+          <div class="card" style="text-align:center; padding:40px;">
+            <p style="color:var(--muted); margin-bottom:14px;">Anda belum memiliki pesanan undangan.</p>
+            <button onclick="openNewOrderModal()" class="btn btn-primary">Pesan Undangan Pertama Anda</button>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = myOrders.map((ord, idx) => {
+        const isLunas = String(ord.status_bayar).toLowerCase() === 'lunas';
+        const waConfirm = `https://wa.me/${window.APP_CONFIG.ADMIN_WA}?text=${encodeURIComponent('Halo Admin KisahKita, saya ingin konfirmasi pembayaran Order ID: ' + ord.order_id + ' (Slug: ' + ord.slug_undangan + ')')}`;
+        return `
+          <div class="card order-item">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <strong>${ord.nama_template}</strong>
+                <span class="badge ${isLunas ? 'badge-success' : 'badge-warning'}">${isLunas ? 'Aktif / Lunas' : 'Menunggu Pembayaran'}</span>
+              </div>
+              <div style="font-size:0.88rem; color:var(--muted);">
+                Order ID: ${ord.order_id} &bull; Slug: <strong>${ord.slug_undangan}</strong>
+              </div>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+              <button onclick="openEditor(${idx})" class="btn btn-primary btn-sm">Edit Konten</button>
+              <button onclick="openGuestModal(${idx})" class="btn btn-outline btn-sm">Link Tamu &amp; RSVP (${(ord.ucapan || []).length})</button>
+              ${isLunas
+                ? `<a href="view.html?slug=${encodeURIComponent(ord.slug_undangan)}" target="_blank" class="btn btn-accent btn-sm">Buka Undangan</a>`
+                : `<a href="${waConfirm}" target="_blank" class="btn btn-outline btn-sm">Konfirmasi Bayar WA</a>`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openEditor(index) {
+      const ord = myOrders[index];
+      const d = ord.invitation_data || {};
+      document.getElementById('editSlug').value = ord.slug_undangan;
+      document.getElementById('editSlugLabel').textContent = ord.slug_undangan;
+      const fields = [
+        'pria_panggilan', 'wanita_panggilan', 'pria_lengkap', 'wanita_lengkap',
+        'pria_ortu', 'wanita_ortu', 'tanggal_acara', 'waktu_akad', 'waktu_resepsi',
+        'tempat_nama', 'tempat_alamat', 'maps_url', 'cerita', 'bank_nama',
+        'bank_norek', 'bank_an', 'foto_cover'
+      ];
+      fields.forEach(f => {
+        document.getElementById(f).value = d[f] || '';
+      });
+      openModal('editorModal');
+    }
+
+    document.getElementById('editorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const slug = document.getElementById('editSlug').value;
+      const fields = [
+        'pria_panggilan', 'wanita_panggilan', 'pria_lengkap', 'wanita_lengkap',
+        'pria_ortu', 'wanita_ortu', 'tanggal_acara', 'waktu_akad', 'waktu_resepsi',
+        'tempat_nama', 'tempat_alamat', 'maps_url', 'cerita', 'bank_nama',
+        'bank_norek', 'bank_an', 'foto_cover'
+      ];
+      const jsonData = {};
+      fields.forEach(f => { jsonData[f] = document.getElementById(f).value.trim(); });
+
+      const res = await KisahAPI.post('saveInvitation', {
+        slug_undangan: slug,
+        json_data: jsonData
+      });
+
+      if (res.status === 'success') {
+        closeModal('editorModal');
+        showAlert('Data undangan berhasil disimpan!');
+        await loadDashboard();
+      } else {
+        alert(res.message || 'Gagal menyimpan data');
+      }
+    });
+
+    document.getElementById('newOrderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const templateId = document.getElementById('orderTemplateSelect').value;
+      const slug = document.getElementById('orderSlugInput').value.trim().toLowerCase();
+
+      const res = await KisahAPI.post('createOrder', {
+        template_id: templateId,
+        slug_undangan: slug
+      });
+
+      if (res.status === 'success') {
+        sessionStorage.removeItem('selected_template_id');
+        closeModal('newOrderModal');
+        showAlert('Pesanan berhasil dibuat! Silakan lengkapi data undangan dan konfirmasi pembayaran.');
+        await loadDashboard();
+      } else {
+        alert(res.message || 'Gagal membuat pesanan');
+      }
+    });
+
+    function openGuestModal(index) {
+      const ord = myOrders[index];
+      activeGuestSlug = ord.slug_undangan;
+      document.getElementById('guestNameInput').value = '';
+      updateGuestLink();
+
+      const ucapan = ord.ucapan || [];
+      const listEl = document.getElementById('ucapanList');
+      listEl.innerHTML = ucapan.length
+        ? ucapan.map(u => `<div style="padding:8px 0; border-bottom:1px solid var(--border);"><strong>${u.nama}</strong> <span class="badge badge-info">${u.hadir || 'Hadir'}</span><p style="font-size:0.86rem; margin-top:4px;">${u.pesan}</p></div>`).join('')
+        : '<p style="color:var(--muted); font-size:0.88rem;">Belum ada ucapan masuk.</p>';
+
+      openModal('guestModal');
+    }
+
+    function updateGuestLink() {
+      const tamu = document.getElementById('guestNameInput').value.trim();
+      const base = window.location.origin + window.location.pathname.replace('dashboard.html', 'view.html');
+      const url = `${base}?slug=${encodeURIComponent(activeGuestSlug)}${tamu ? '&tamu=' + encodeURIComponent(tamu) : ''}`;
+      document.getElementById('generatedGuestUrl').value = url;
+      const waMsg = `Kepada Yth. ${tamu || 'Bapak/Ibu/Saudara/i'},
+
+Tanpa mengurangi rasa hormat, kami mengundang Anda untuk hadir di acara pernikahan kami. Info lengkap:
+${url}`;
+      document.getElementById('waShareBtn').href = `https://wa.me/?text=${encodeURIComponent(waMsg)}`;
+    }
+
+    function copyGuestUrl() {
+      const input = document.getElementById('generatedGuestUrl');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      alert('Link undangan berhasil disalin!');
+    }
+
+    async function loadDashboard() {
+      const [catRes, dashRes] = await Promise.all([
+        KisahAPI.get({ action: 'getCatalog' }),
+        KisahAPI.post('getMyDashboard')
+      ]);
+      if (catRes.status === 'success') catalogTemplates = catRes.data || [];
+      if (dashRes.status === 'success') {
+        myOrders = dashRes.data || [];
+        renderOrders();
+      } else {
+        document.getElementById('ordersContainer').innerHTML = `<div class="card">${dashRes.message || 'Gagal memuat dashboard'}</div>`;
+      }
+    }
+
+    (async function init() {
+      await loadDashboard();
+      const params = new URLSearchParams(window.location.search);
+      const orderTpl = params.get('order') || sessionStorage.getItem('selected_template_id');
+      if (orderTpl && catalogTemplates.length) {
+        openNewOrderModal(orderTpl);
+      }
+    })();
+  </script>
+</body>
+</html>

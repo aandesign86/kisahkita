@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Undangan Pernikahan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #142b47;
+      --blue: #274c77;
+      --gold: #c9a24b;
+      --cream: #f8f5ef;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .serif { font-family: 'Cormorant Garamond', serif; }
+
+    /* Cover Overlay */
+    #coverScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: linear-gradient(rgba(20, 43, 71, 0.72), rgba(20, 43, 71, 0.85)),
+                  url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80') center/cover;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.6s ease;
+    }
+    #coverScreen.opened {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cover-couple {
+      font-size: clamp(2.6rem, 7vw, 4.2rem);
+      color: #f3d999;
+      margin: 10px 0 22px;
+      line-height: 1.1;
+    }
+    .guest-card {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(201, 162, 75, 0.55);
+      backdrop-filter: blur(8px);
+      padding: 16px 28px;
+      border-radius: 14px;
+      margin-bottom: 24px;
+      max-width: 380px;
+      width: 100%;
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: #142b47;
+      border: none;
+      padding: 13px 28px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Sections */
+    .wrapper {
+      max-width: 540px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 0 40px rgba(20, 43, 71, 0.08);
+      min-height: 100vh;
+    }
+    section {
+      padding: 52px 24px;
+      text-align: center;
+      position: relative;
+    }
+    .marble-bg {
+      background: linear-gradient(180deg, #eef3f9 0%, #ffffff 50%, #f5efe4 100%);
+    }
+    .section-title {
+      font-size: 2.1rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .divider {
+      width: 64px;
+      height: 2px;
+      background: var(--gold);
+      margin: 0 auto 22px;
+    }
+
+    /* Couple Profile */
+    .couple-grid {
+      display: grid;
+      gap: 28px;
+      margin-top: 24px;
+    }
+    .person-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--gold);
+      margin: 0 auto 12px;
+      display: block;
+    }
+    .person-name { font-size: 1.75rem; color: var(--blue); }
+    .person-parents { font-size: 0.88rem; color: #5b6777; margin-top: 4px; }
+
+    /* Countdown */
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .cd-box {
+      background: var(--navy);
+      color: #fff;
+      padding: 14px 8px;
+      border-radius: 12px;
+      border-bottom: 3px solid var(--gold);
+    }
+    .cd-box span { display: block; font-size: 1.5rem; font-weight: 700; color: #f3d999; }
+    .cd-box small { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Event Card */
+    .event-card {
+      background: #f9fbfd;
+      border: 1px solid #dbe4ee;
+      border-radius: 16px;
+      padding: 24px 18px;
+      margin-top: 18px;
+    }
+    .event-card h3 { font-size: 1.65rem; color: var(--blue); margin-bottom: 8px; }
+
+    /* Gift & RSVP */
+    .gift-box {
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 16px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+    .wish-item {
+      text-align: left;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Halaman Sampul -->
+  <div id="coverScreen">
+    <p style="letter-spacing:3px; text-transform:uppercase; font-size:0.8rem; color:#f3d999;">The Wedding Of</p>
+    <h1 class="cover-couple" id="coverCouple">Raka &amp; Nadia</h1>
+    <div class="guest-card">
+      <p style="font-size:0.82rem; opacity:0.85;">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+      <h3 id="guestName" style="font-size:1.35rem; margin-top:4px; color:#fff;">Tamu Undangan</h3>
+    </div>
+    <button class="btn-gold" onclick="openInvitation()">Buka Undangan</button>
+  </div>
+
+  <main class="wrapper">
+    <!-- Hero Mempelai -->
+    <section class="marble-bg">
+      <p style="font-size:0.85rem; letter-spacing:2px; text-transform:uppercase; color:var(--gold); font-weight:700;">Assalamu'alaikum Wr. Wb.</p>
+      <p style="font-size:0.92rem; color:#4b5563; margin-top:10px;">
+        Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami:
+      </p>
+
+      <div class="couple-grid">
+        <div>
+          <img id="fotoPria" class="person-photo" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80" alt="Mempelai Pria" />
+          <h2 class="person-name" id="priaLengkap">Raka Pratama, S.Kom.</h2>
+          <p class="person-parents" id="priaOrtu">Putra Bpk. Hendra &amp; Ibu Sari</p>
+        </div>
+
+        <div class="serif" style="font-size:2.2rem; color:var(--gold);">&amp;</div>
+
+        <div>
+          <img id="fotoWanita" class="person-photo" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80" alt="Mempelai Wanita" />
+          <h2 class="person-name" id="wanitaLengkap">Nadia Putri Lestari, S.E.</h2>
+          <p class="person-parents" id="wanitaOrtu">Putri Bpk. Ahmad &amp; Ibu Ratna</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Countdown & Jadwal -->
+    <section>
+      <h2 class="section-title">Menuju Hari Bahagia</h2>
+      <div class="divider"></div>
+      <p id="tanggalTeks" style="font-weight:600; color:var(--blue);">Minggu, 20 Desember 2026</p>
+
+      <div class="countdown">
+        <div class="cd-box"><span id="cdHari">00</span><small>Hari</small></div>
+        <div class="cd-box"><span id="cdJam">00</span><small>Jam</small></div>
+        <div class="cd-box"><span id="cdMenit">00</span><small>Menit</small></div>
+        <div class="cd-box"><span id="cdDetik">00</span><small>Detik</small></div>
+      </div>
+
+      <div class="event-card">
+        <h3>Akad Nikah</h3>
+        <p id="waktuAkad" style="font-weight:600;">08.00 - 10.00 WIB</p>
+        <hr style="border:none; border-top:1px dashed #cbd5e1; margin:16px 0;" />
+        <h3>Resepsi Pernikahan</h3>
+        <p id="waktuResepsi" style="font-weight:600;">11.00 - 14.00 WIB</p>
+        <p id="tempatNama" style="font-weight:700; margin-top:14px; color:var(--navy);">Grand Ballroom Hotel Mulia</p>
+        <p id="tempatAlamat" style="font-size:0.88rem; color:#4b5563; margin:4px 0 16px;">Jl. Asia Afrika No. 8, Jakarta Pusat</p>
+        <a id="mapsLink" href="https://maps.google.com" target="_blank" class="btn-gold" style="display:inline-block; text-decoration:none; font-size:0.88rem; padding:10px 22px;">Buka Google Maps</a>
+      </div>
+    </section>
+
+    <!-- Kisah Cinta -->
+    <section class="marble-bg">
+      <h2 class="section-title">Kisah Cinta Kami</h2>
+      <div class="divider"></div>
+      <p id="ceritaTeks" style="font-size:0.95rem; color:#374151; line-height:1.75;">
+        Berawal dari pertemuan sederhana hingga akhirnya memantapkan hati membangun keluarga bersama.
+      </p>
+    </section>
+
+    <!-- Amplop Digital -->
+    <section>
+      <h2 class="section-title">Amplop Digital</h2>
+      <div class="divider"></div>
+      <p style="font-size:0.9rem; color:#4b5563;">Doa restu Anda merupakan karunia terindah bagi kami. Namun jika ingin memberi tanda kasih:</p>
+      <div class="gift-box">
+        <p id="bankNama" style="letter-spacing:1px; font-weight:700; color:#f3d999;">BCA</p>
+        <h3 id="bankNorek" style="font-size:1.8rem; margin:6px 0; font-family:inherit;">1234567890</h3>
+        <p id="bankAn" style="font-size:0.9rem; opacity:0.9; margin-bottom:14px;">a.n. Raka Pratama</p>
+        <button onclick="copyNorek()" class="btn-gold" style="padding:8px 18px; font-size:0.82rem;">Salin Nomor Rekening</button>
+      </div>
+    </section>
+
+    <!-- RSVP & Ucapan -->
+    <section class="marble-bg">
+      <h2 class="section-title">Ucapan &amp; Doa</h2>
+      <div class="divider"></div>
+      <form id="rsvpForm" style="text-align:left;">
+        <input type="text" id="rsvpNama" class="form-input" placeholder="Nama Anda" required />
+        <select id="rsvpHadir" class="form-input">
+          <option value="Hadir">InsyaAllah Hadir</option>
+          <option value="Tidak Hadir">Maaf Belum Bisa Hadir</option>
+        </select>
+        <textarea id="rsvpPesan" class="form-input" rows="3" placeholder="Tulis ucapan & doa untuk kedua mempelai..." required></textarea>
+        <button type="submit" id="rsvpBtn" class="btn-gold" style="width:100%;">Kirim Ucapan</button>
+      </form>
+
+      <div id="wishContainer" style="margin-top:20px;"></div>
+    </section>
+  </main>
+
+  <script>
+    let targetDate = new Date('2026-12-20T08:00:00').getTime();
+    let wishList = [];
+
+    function openInvitation() {
+      document.getElementById('coverScreen').classList.add('opened');
+    }
+
+    function copyNorek() {
+      const norek = document.getElementById('bankNorek').textContent.trim();
+      navigator.clipboard.writeText(norek);
+      alert('Nomor rekening ' + norek + ' berhasil disalin!');
+    }
+
+    function renderWishes() {
+      const el = document.getElementById('wishContainer');
+      el.innerHTML = wishList.map(w => `
+        <div class="wish-item">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>${w.nama}</strong>
+            <span style="font-size:0.75rem; background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:999px;">${w.hadir || 'Hadir'}</span>
+          </div>
+          <p style="font-size:0.88rem; color:#374151; margin-top:6px;">${w.pesan}</p>
+        </div>
+      `).join('');
+    }
+
+    function applyInvitationData(payload) {
+      const tamu = payload.tamu || 'Tamu Undangan';
+      const d = payload.invitation || {};
+      wishList = payload.ucapan || [];
+
+      document.getElementById('guestName').textContent = tamu;
+      document.getElementById('rsvpNama').value = tamu !== 'Tamu Undangan' ? tamu : '';
+
+      const pria = d.pria_panggilan || 'Raka';
+      const wanita = d.wanita_panggilan || 'Nadia';
+      document.getElementById('coverCouple').textContent = `${pria} & ${wanita}`;
+
+      if (d.pria_lengkap) document.getElementById('priaLengkap').textContent = d.pria_lengkap;
+      if (d.wanita_lengkap) document.getElementById('wanitaLengkap').textContent = d.wanita_lengkap;
+      if (d.pria_ortu) document.getElementById('priaOrtu').textContent = d.pria_ortu;
+      if (d.wanita_ortu) document.getElementById('wanitaOrtu').textContent = d.wanita_ortu;
+      if (d.waktu_akad) document.getElementById('waktuAkad').textContent = d.waktu_akad;
+      if (d.waktu_resepsi) document.getElementById('waktuResepsi').textContent = d.waktu_resepsi;
+      if (d.tempat_nama) document.getElementById('tempatNama').textContent = d.tempat_nama;
+      if (d.tempat_alamat) document.getElementById('tempatAlamat').textContent = d.tempat_alamat;
+      if (d.maps_url) document.getElementById('mapsLink').href = d.maps_url;
+      if (d.cerita) document.getElementById('ceritaTeks').textContent = d.cerita;
+      if (d.bank_nama) document.getElementById('bankNama').textContent = d.bank_nama;
+      if (d.bank_norek) document.getElementById('bankNorek').textContent = d.bank_norek;
+      if (d.bank_an) document.getElementById('bankAn').textContent = 'a.n. ' + d.bank_an;
+      if (d.foto_pria) document.getElementById('fotoPria').src = d.foto_pria;
+      if (d.foto_wanita) document.getElementById('fotoWanita').src = d.foto_wanita;
+      if (d.foto_cover) {
+        document.getElementById('coverScreen').style.backgroundImage =
+          `linear-gradient(rgba(20, 43, 71, 0.72), rgba(20, 43, 71, 0.85)), url('${d.foto_cover}')`;
+      }
+      if (d.tanggal_acara) {
+        const dt = new Date(d.tanggal_acara + 'T08:00:00');
+        if (!isNaN(dt.getTime())) {
+          targetDate = dt.getTime();
+          document.getElementById('tanggalTeks').textContent = dt.toLocaleDateString('id-ID', {
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+          });
+        }
+      }
+      renderWishes();
+    }
+
+    // Baca query param awal (jika dibuka langsung tanpa view.html)
+    const initParams = new URLSearchParams(window.location.search);
+    if (initParams.get('tamu')) {
+      document.getElementById('guestName').textContent = initParams.get('tamu');
+    }
+
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'KISAH_INVITATION_DATA') {
+        applyInvitationData(event.data.payload);
+      }
+      if (event.data && event.data.type === 'KISAH_UCAPAN_RESULT') {
+        const btn = document.getElementById('rsvpBtn');
+        btn.disabled = false;
+        btn.textContent = 'Kirim Ucapan';
+        if (event.data.payload && event.data.payload.status === 'success') {
+          document.getElementById('rsvpPesan').value = '';
+          alert('Terima kasih atas ucapan dan doa Anda!');
+        }
+      }
+    });
+
+    document.getElementById('rsvpForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const item = {
+        nama: document.getElementById('rsvpNama').value.trim(),
+        hadir: document.getElementById('rsvpHadir').value,
+        pesan: document.getElementById('rsvpPesan').value.trim(),
+        waktu: new Date().toISOString().slice(0, 10)
+      };
+      wishList.unshift(item);
+      renderWishes();
+
+      if (window.parent !== window) {
+        const btn = document.getElementById('rsvpBtn');
+        btn.disabled = true;
+        btn.textContent = 'Mengirim...';
+        window.parent.postMessage({ type: 'KISAH_SUBMIT_UCAPAN', payload: item }, '*');
+      }
+    });
+
+    setInterval(() => {
+      const diff = Math.max(0, targetDate - Date.now());
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / 1000 / 60) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      document.getElementById('cdHari').textContent = String(d).padStart(2, '0');
+      document.getElementById('cdJam').textContent = String(h).padStart(2, '0');
+      document.getElementById('cdMenit').textContent = String(m).padStart(2, '0');
+      document.getElementById('cdDetik').textContent = String(s).padStart(2, '0');
+    }, 1000);
+  </script>
+</body>
+</html>

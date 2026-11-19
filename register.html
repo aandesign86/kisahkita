@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar Pelanggan — KisahKita</title>
+  <link rel="stylesheet" href="assets/app.css" />
+</head>
+<body style="display:flex; min-height:100vh; align-items:center; justify-content:center; padding:20px;">
+  <div class="card" style="max-width:420px; width:100%;">
+    <div style="text-align:center; margin-bottom:20px;">
+      <a href="index.html" class="brand" style="justify-content:center;">Kisah<span>Kita</span></a>
+      <p style="color:var(--muted); font-size:0.9rem; margin-top:6px;">Buat Akun Pelanggan Undangan Digital</p>
+    </div>
+
+    <div id="alertBox" class="alert"></div>
+
+    <form id="registerForm">
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="nama" class="form-control" placeholder="Contoh: Raka Pratama" required />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" class="form-control" placeholder="nama@email.com" required />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" class="form-control" minlength="6" placeholder="Minimal 6 karakter" required />
+      </div>
+      <button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%; margin-top:6px;">Daftar Akun</button>
+    </form>
+
+    <p style="text-align:center; font-size:0.88rem; color:var(--muted); margin-top:16px;">
+      Sudah punya akun? <a href="login.html" style="color:var(--primary); font-weight:700;">Masuk di sini</a>
+    </p>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="assets/api.js"></script>
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const alertBox = document.getElementById('alertBox');
+      alertBox.className = 'alert';
+      btn.disabled = true;
+      btn.textContent = 'Mendaftarkan...';
+
+      try {
+        const res = await KisahAPI.post('register', {
+          nama: document.getElementById('nama').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          password: document.getElementById('password').value
+        });
+
+        if (res.status === 'success') {
+          alertBox.className = 'alert alert-success show';
+          alertBox.textContent = 'Registrasi berhasil! Mengalihkan ke halaman login...';
+          setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+        } else {
+          alertBox.className = 'alert alert-error show';
+          alertBox.textContent = res.message || 'Registrasi gagal';
+        }
+      } catch (err) {
+        alertBox.className = 'alert alert-error show';
+        alertBox.textContent = 'Gagal terhubung ke server.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Daftar Akun';
+      }
+    });
+  </script>
+</body>
+</html>

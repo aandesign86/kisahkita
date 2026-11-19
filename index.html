@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KisahKita — Jasa Pembuatan Undangan Digital Online</title>
+  <link rel="stylesheet" href="assets/app.css" />
+  <style>
+    .hero {
+      padding: 68px 0 54px;
+      text-align: center;
+      background: radial-gradient(circle at top, #eef4fb 0%, var(--bg) 70%);
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--primary);
+      max-width: 780px;
+      margin: 0 auto 14px;
+      line-height: 1.2;
+    }
+    .hero p {
+      color: var(--muted);
+      max-width: 620px;
+      margin: 0 auto 26px;
+      font-size: 1.05rem;
+    }
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .tpl-card {
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+    .tpl-card:hover { transform: translateY(-4px); }
+    .tpl-thumb {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      background: #e5e7eb;
+    }
+    .tpl-body {
+      padding: 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .tpl-price {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 8px 0 14px;
+    }
+    .tpl-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .steps {
+      margin: 64px 0;
+      padding: 40px 24px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">Kisah<span>Kita</span></a>
+      <nav class="nav-links" id="navActions">
+        <a href="#katalog" class="btn btn-outline btn-sm">Katalog</a>
+        <a href="login.html" class="btn btn-outline btn-sm">Masuk</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Daftar Pelanggan</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <span class="badge badge-info" style="margin-bottom: 12px;">Undangan Digital Siap Sebar dalam 5 Menit</span>
+      <h1>Buat Undangan Pernikahan Online Elegan &amp; Praktis</h1>
+      <p>Pilih desain favorit Anda, isi data mempelai lewat dashboard pelanggan, dan bagikan link khusus untuk setiap tamu undangan.</p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a href="#katalog" class="btn btn-primary">Lihat Katalog Template</a>
+        <a href="view.html?slug=demo-undangan&tamu=Bapak+Budi+Santoso" target="_blank" class="btn btn-outline">Lihat Contoh Undangan</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="container" id="katalog">
+    <div style="text-align:center; margin-bottom:20px;">
+      <h2 style="color:var(--primary); font-size:1.75rem;">Katalog Desain Undangan</h2>
+      <p style="color:var(--muted);">Klik Preview untuk melihat tampilan penuh, atau Pesan untuk mulai membuat.</p>
+    </div>
+
+    <div class="filter-bar" id="filterBar">
+      <button class="btn btn-outline btn-sm filter-btn active" data-cat="ALL">Semua Tema</button>
+      <button class="btn btn-outline btn-sm filter-btn" data-cat="Modern">Modern</button>
+      <button class="btn btn-outline btn-sm filter-btn" data-cat="Adat">Adat</button>
+      <button class="btn btn-outline btn-sm filter-btn" data-cat="Minimalis">Minimalis</button>
+    </div>
+
+    <div id="catalogGrid" class="grid-3">
+      <div class="card">Memuat katalog template...</div>
+    </div>
+
+    <section class="steps">
+      <h3 style="text-align:center; color:var(--primary); margin-bottom:24px;">Cara Pemesanan Mudah</h3>
+      <div class="grid-4">
+        <div>
+          <strong>1. Pilih Desain</strong>
+          <p style="color:var(--muted); font-size:0.9rem;">Jelajahi katalog dan coba live preview tema pilihan Anda.</p>
+        </div>
+        <div>
+          <strong>2. Daftar &amp; Pesan</strong>
+          <p style="color:var(--muted); font-size:0.9rem;">Buat akun pelanggan dan tentukan link undangan (contoh: <em>raka-nadia</em>).</p>
+        </div>
+        <div>
+          <strong>3. Isi Data di Dashboard</strong>
+          <p style="color:var(--muted); font-size:0.9rem;">Lengkapi nama mempelai, lokasi maps, galeri foto, dan amplop digital.</p>
+        </div>
+        <div>
+          <strong>4. Sebar ke Tamu</strong>
+          <p style="color:var(--muted); font-size:0.9rem;">Gunakan generator nama tamu otomatis dan pantau ucapan RSVP.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">&copy; 2026 KisahKita — Platform Jasa Undangan Digital Online.</div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="assets/api.js"></script>
+  <script>
+    let allTemplates = [];
+    let currentCat = 'ALL';
+
+    function renderNavbar() {
+      const session = KisahAPI.getSession();
+      if (!session) return;
+      const dashUrl = session.role === 'admin' ? 'admin.html' : 'dashboard.html';
+      document.getElementById('navActions').innerHTML = `
+        <a href="${dashUrl}" class="btn btn-primary btn-sm">Dashboard (${session.nama})</a>
+        <button onclick="logout()" class="btn btn-outline btn-sm">Keluar</button>
+      `;
+    }
+
+    function logout() {
+      KisahAPI.clearSession();
+      window.location.reload();
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalogGrid');
+      const filtered = currentCat === 'ALL'
+        ? allTemplates
+        : allTemplates.filter(t => String(t.kategori).toLowerCase() === currentCat.toLowerCase());
+
+      if (!filtered.length) {
+        grid.innerHTML = '<div class="card">Belum ada template pada kategori ini.</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(tpl => `
+        <article class="card tpl-card">
+          <img class="tpl-thumb" src="${tpl.thumbnail_url || ''}" alt="${tpl.nama_template}" />
+          <div class="tpl-body">
+            <div>
+              <span class="badge badge-muted">${tpl.kategori || 'Umum'}</span>
+              <h3 style="margin-top:8px; font-size:1.15rem;">${tpl.nama_template}</h3>
+              <div class="tpl-price">${KisahAPI.formatRupiah(tpl.harga)}</div>
+            </div>
+            <div class="tpl-actions">
+              <a href="view.html?slug=demo-undangan&tpl=${encodeURIComponent(tpl.file_path)}&tamu=Tamu+Undangan" target="_blank" class="btn btn-outline btn-sm">Preview</a>
+              <button onclick="orderTemplate('${tpl.template_id}')" class="btn btn-primary btn-sm">Pesan</button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function orderTemplate(templateId) {
+      sessionStorage.setItem('selected_template_id', templateId);
+      const session = KisahAPI.getSession();
+      if (!session) {
+        window.location.href = 'login.html';
+      } else if (session.role === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'dashboard.html?order=' + encodeURIComponent(templateId);
+      }
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCat = btn.dataset.cat;
+        renderCatalog();
+      });
+    });
+
+    (async function init() {
+      renderNavbar();
+      const res = await KisahAPI.get({ action: 'getCatalog' });
+      if (res.status === 'success') {
+        allTemplates = res.data || [];
+        renderCatalog();
+      } else {
+        document.getElementById('catalogGrid').innerHTML = `<div class="card">${res.message || 'Gagal memuat katalog'}</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
